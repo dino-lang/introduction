@@ -56,14 +56,14 @@ line.
 
 The assembler will have the following instructions:
 
-   | Instruction      | Description                                         |
-   |------------------|-----------------------------------------------------|
-   | `goto` *label*   | Transfer control to the instruction marked *label*. |
-   |`gosub` *label*   | Transfer control to the instruction marked *label* and save the next instruction address. |
-   | `return`         | Transfer control to the instruction following the latest executed gosub instruction. |
-   |`skipif` *symbol* | If the current token is *symbol*, the following instruction is skipped. Otherwise, transfer control to the following instruction. |
-   | `match` *symbol* | The current token should be *symbol*, otherwise a syntax error is set. After matching, the next token is read and become the current token. |
-   | `next`           | The next token is read and become the current token. |
+| Instruction      | Description                                         |
+|------------------|-----------------------------------------------------|
+| `goto` *label*   | Transfer control to the instruction marked *label*. |
+|`gosub` *label*   | Transfer control to the instruction marked *label* and save the next instruction address. |
+| `return`         | Transfer control to the instruction following the latest executed gosub instruction. |
+|`skipif` *symbol* | If the current token is *symbol*, the following instruction is skipped. Otherwise, transfer control to the following instruction. |
+| `match` *symbol* | The current token should be *symbol*, otherwise a syntax error is set. After matching, the next token is read and become the current token. |
+| `next`           | The next token is read and become the current token. |
 
 The following assembler fragment recognizes Pascal designators.
 
