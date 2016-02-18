@@ -437,9 +437,22 @@ the interpreter) and a `.c` file (the interpreter itself). We create
 the files on line 5. The parameter `bname` of the function `gen` is a
 base name of the generated files. The interface file contains
 definitions of codes of tokens in `match` and `skipif` instructions as
-C macros (line 10) and definition of function `yyparse` (line
-33). Function `yyparse` is a main interpreter function. It returns 0
-if the source program is correct, and nonzero otherwise.
+C macros (line 10).
+
+Line 8 contains a code to get the token names as a vector.  First we
+transform table `t2i` into a vector with a special function `vec`.
+The generated vector has an even number of elements which are divided
+by pairs: the table key and the corresponding table element.  So each
+vector element with an even index contains a token name.  We extract
+the names by using a *vector slice*.  The slice refers for each
+element starting with index 0 using step 2.  The missed slice part
+between pair of `:` is a *slice bound*.  In this case it is a length
+of the original vector.
+
+The interface file also contains definition of function `yyparse`
+(line 33). The generated function `yyparse` is a main interpreter
+function. It returns 0 if the source program is correct, and nonzero
+otherwise.
 
 ```
      1. include "ir";                                                                      
