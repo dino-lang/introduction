@@ -1,74 +1,107 @@
-# Introduction to Programming in Dino
-## Vladimir Makarov, vmakarov@gcc.gnu.org
-## Feb, 2016
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional //EN">
+<html>
+<head>
+  <meta name="GENERATOR" content="mkd2html 2.1.8 DEBUG DL=DISCOUNT FENCED-CODE">
+  <meta http-equiv="Content-Type"
+        content="text/html; charset=utf-8"></head>
+<body>
+<h1>Introduction to Programming in Dino</h1>
 
+<h2>Vladimir Makarov, vmakarov@gcc.gnu.org</h2>
 
-*Dino* is a high-level, dynamically typed, scripting language that has
-been designed for simplicity, uniformity, and expressiveness. Dino is
-similar to such well known scripting languages as *Python*, *Perl*,
-and *Lua*. As most programmers know the C language, Dino resembles C
-where possible.
+<h2>Feb, 2016</h2>
 
-Dino is an extensible, object oriented language that has garbage
+<p><em>Dino</em> is a high-level, dynamic scripting language that has been
+designed for simplicity, uniformity, and expressiveness. Dino is
+similar to such well known scripting languages as <em>Python</em>, <em>Perl</em>, and
+<em>Lua</em>. As most programmers know the C language, Dino resembles C
+where possible.</p>
+
+<p>Dino is an extensible, object oriented language that has garbage
 collection. It supports parallelism description, exception handling,
 pattern matching, and dynamic loading of libraries written on other
-languages. Although Dino works on Mac *OS X* and on *Windows* under
-CYGWIN, its main platform is *Linux*.
+languages. Although Dino works on Mac <em>OS X</em> and on <em>Windows</em> under
+CYGWIN, its main platform is <em>Linux</em>.</p>
 
-This document is a concise introduction to the new Dino scripting
-language, but is not a programmer's manual.
+<p>This document is a concise introduction to the new Dino scripting
+language, but is not a programmer&rsquo;s manual.</p>
 
-# Some History
+<h1>Some History</h1>
 
-Originally, Dino was designed and implemented by the Russian graphics
+<p>Originally, Dino was designed and implemented by the Russian graphics
 company
-[ANIMATEK](http://www.mobygames.com/company/animatek-international-inc)
+<a href="http://www.mobygames.com/company/animatek-international-inc">ANIMATEK</a>
 to describe the movement of dinosaurs in an animation project. (This
-is origin of the language's name.) At that time it worked in only 64KB
+is origin of the language&rsquo;s name.) At that time it worked in only 64KB
 memory. It has been considerably redesigned and reimplemented with the
-aid of the COCOM toolset.
+aid of the COCOM toolset.</p>
 
-# Let's Begin
+<h1>Let&rsquo;s Begin</h1>
 
-The best way to get the feel of a programming language is to see a
+<p>The best way to get the feel of a programming language is to see a
 program written in it. Because I have worked in the compiler field for
-the last 30 years, I'll write a small syntactic parser
-assembler in Dino.
+the last 30 years, I&rsquo;ll write a small syntactic parser
+assembler in Dino.</p>
 
-Most of us do not remember how programmers wrote programs for old
+<p>Most of us do not remember how programmers wrote programs for old
 computers that had only a few kilobytes of memory. Long ago I read
 about an Algol 60 compiler that worked on a computer that had only 420
-20-bits words`[1]`. In another old book`[2]`, the author
+20-bits words<code>[1]</code>. In another old book<code>[2]</code>, the author
 describes an Algol compiler working on 1024 42-bits words. How did
 they achieve this? One of the ways is to use an interpreter for a
 specialized language; a program in a specialized language is usually
-smaller. Let's implement an assembler for syntactic parsers. The
+smaller. Let&rsquo;s implement an assembler for syntactic parsers. The
 assembler output will be a syntactic parser interpreter in C. The
-assembler instructions have the following format:
+assembler instructions have the following format:</p>
 
-```
-        [label:] [code [operand]]
-```
+<pre><code>        [label:] [code [operand]]
+</code></pre>
 
-Here, the constructions in brackets are optional. For convenience we
-will allow comments that start with `;` and finish at the end of the
-line.
+<p>Here, the constructions in brackets are optional. For convenience we
+will allow comments that start with <code>;</code> and finish at the end of the
+line.</p>
 
-The assembler will have the following instructions:
+<p>The assembler will have the following instructions:</p>
 
-   | Instruction      | Description                                         |
-   |------------------|-----------------------------------------------------|
-   | `goto` *label*   | Transfer control to the instruction marked *label*. |
-   |`gosub` *label*   | Transfer control to the instruction marked *label* and save the next instruction address. |
-   | `return`         | Transfer control to the instruction following the latest executed gosub instruction. |
-   |`skipif` *symbol* | If the current token is *symbol*, the following instruction is skipped. Otherwise, transfer control to the following instruction. |
-   | `match` *symbol* | The current token should be *symbol*, otherwise a syntax error is set. After matching, the next token is read and become the current token. |
-   | `next`           | The next token is read and become the current token. |
+<table>
+<thead>
+<tr>
+<th> Instruction      </th>
+<th> Description                                         </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> <code>goto</code> <em>label</em>   </td>
+<td> Transfer control to the instruction marked <em>label</em>. </td>
+</tr>
+<tr>
+<td><code>gosub</code> <em>label</em>   </td>
+<td> Transfer control to the instruction marked <em>label</em> and save the next instruction address. </td>
+</tr>
+<tr>
+<td> <code>return</code>         </td>
+<td> Transfer control to the instruction following the latest executed gosub instruction. </td>
+</tr>
+<tr>
+<td><code>skipif</code> <em>symbol</em> </td>
+<td> If the current token is <em>symbol</em>, the following instruction is skipped. Otherwise, transfer control to the following instruction. </td>
+</tr>
+<tr>
+<td> <code>match</code> <em>symbol</em> </td>
+<td> The current token should be <em>symbol</em>, otherwise a syntax error is set. After matching, the next token is read and become the current token. </td>
+</tr>
+<tr>
+<td> <code>next</code>           </td>
+<td> The next token is read and become the current token. </td>
+</tr>
+</tbody>
+</table>
 
-The following assembler fragment recognizes Pascal designators.
 
-```
-    ;
+<p>The following assembler fragment recognizes Pascal designators.</p>
+
+<pre><code>    ;
     ; Designator = Ident { "." Ident | "[" { expr / ","} "]" | "@" }
     ;
     start:
@@ -93,100 +126,111 @@ The following assembler fragment recognizes Pascal designators.
             return
             next    ; skip @
             goto    point
-```
+</code></pre>
 
-## Overall structure of the assembler.
+<h2>Overall structure of the assembler.</h2>
 
-As a rule, assemblers work in two passes. Therefore, we need to have
+<p>As a rule, assemblers work in two passes. Therefore, we need to have
 some internal representation (IR) to store the program between the
-passes. We will create the following Dino files:
+passes. We will create the following Dino files:</p>
 
-  * The code that describes the IR and an auxiliary function will be
-    in the file [`ir.d`](./ir.d).
-  * The code for reading the assembler program and for generating the
-    IR will be in the file [`input.d`](./input.d).
-  * The code for checking the IR will be in the file [`check.d`](./check.d).
-  * The code for generating the interpreter in C will be in the file
-    [`gen.d`](./gen.d).
-  * The top level code will be in the file [`sas.d`](./sas.d).
+<ul>
+<li>The code that describes the IR and an auxiliary function will be
+in the file <a href="./ir.d"><code>ir.d</code></a>.</li>
+<li>The code for reading the assembler program and for generating the
+IR will be in the file <a href="./input.d"><code>input.d</code></a>.</li>
+<li>The code for checking the IR will be in the file <a href="./check.d"><code>check.d</code></a>.</li>
+<li>The code for generating the interpreter in C will be in the file
+<a href="./gen.d"><code>gen.d</code></a>.</li>
+<li>The top level code will be in the file <a href="./sas.d"><code>sas.d</code></a>.</li>
+</ul>
 
-These files are described in detail below.
 
-## File ir.d
+<p>These files are described in detail below.</p>
 
-This file contains the description of the IR in Dino and also some
+<h2>File ir.d</h2>
+
+<p>This file contains the description of the IR in Dino and also some
 auxiliary function. Dino has dynamic variables. In other words, a
 Dino variable may contain a value of any Dino type. The major Dino
-types are:
+types are:</p>
 
-  * *characters* (Unicode characters)
-  * *integers* (64-bit signed integers)
-  * *long integers* (arbitrary precision signed integers)
-  * *floating point numbers* (IEEE double floating point numbers)
-  * *heterogeneous vectors* (that is, vectors that may contain
-    elements of different types. A typical example of vector is a
-    string, a vector whose values can only be characters)
-  * *associative tables*
-  * *objects*
+<ul>
+<li><em>characters</em> (Unicode characters)</li>
+<li><em>integers</em> (64-bit signed integers)</li>
+<li><em>long integers</em> (arbitrary precision signed integers)</li>
+<li><em>floating point numbers</em> (IEEE double floating point numbers)</li>
+<li><em>heterogeneous vectors</em> (that is, vectors that may contain
+elements of different types. A typical example of vector is a
+string, a vector whose values can only be characters)</li>
+<li><em>associative tables</em></li>
+<li><em>objects</em></li>
+</ul>
 
-The values of the last three types are **shared**. That means that if a
+
+<p>The values of the last three types are <strong>shared</strong>. That means that if a
 variable value is assigned to another variable, any changes to the
 shared value through the first variable are reflected in the value of
 the second variable. In general, working with shared values is
-analogous to working with pointers in C, but with fewer risks.
+analogous to working with pointers in C, but with fewer risks.</p>
 
-On line 1 we see a definition of the *singleton object* `ir`.  The
+<p>On line 1 we see a definition of the <em>singleton object</em> <code>ir</code>.  The
 class of a singleton object is anonymous and only one instance of the
 class exists.  That is why such instance is called a singleton object.
 Singleton objects in Dino are frequently used as name spaces.  The
-object `ir` (lines 1-12) contains information about the entire
-assembler program:
+object <code>ir</code> (lines 1-12) contains information about the entire
+assembler program:</p>
 
-   * `ns`, which is initialized by an empty vector, will contain a
-     vector of IR nodes that correspond to all instructions in the
-     source program.
-   * `l2i`, which is initialized by an empty associative table, will
-     contain a table for transforming label names into an index of
-     the node in `ns`. This node will represent assembler instruction
-     marked by the label.
-   * `i2l`, which is initialized by an empty associative table, will
-     contain a table for transforming the index of the node in `ns`
-     into a vector of label names. A node with such an index in `ns`
-     will represent assembler instruction marked by the labels in the
-     vector.
-  * `ss`, which is initialized by an empty associative table, will
-    contain a table of all symbols in the assembler instructions
-    `match` and `skipif`.
-  * `mind` and `maxd` will contain the minimum and maximum displacements
-    of labels in the source program.
+<ul>
+<li> <code>ns</code>, which is initialized by an empty vector, will contain a
+ vector of IR nodes that correspond to all instructions in the
+ source program.</li>
+<li> <code>l2i</code>, which is initialized by an empty associative table, will
+ contain a table for transforming label names into an index of
+ the node in <code>ns</code>. This node will represent assembler instruction
+ marked by the label.</li>
+<li> <code>i2l</code>, which is initialized by an empty associative table, will
+ contain a table for transforming the index of the node in <code>ns</code>
+ into a vector of label names. A node with such an index in <code>ns</code>
+ will represent assembler instruction marked by the labels in the
+ vector.</li>
+<li><code>ss</code>, which is initialized by an empty associative table, will
+contain a table of all symbols in the assembler instructions
+<code>match</code> and <code>skipif</code>.</li>
+<li><code>mind</code> and <code>maxd</code> will contain the minimum and maximum displacements
+of labels in the source program.</li>
+</ul>
 
-Inside the singleton object object `ir`, classes describing each
+
+<p>Inside the singleton object object <code>ir</code>, classes describing each
 assembler instruction are defined.  Line 5 describes an abstract node
-of an IR. A node of such class has the variable `lno` (which is the
+of an IR. A node of such class has the variable <code>lno</code> (which is the
 source line of the corresponding assembler instruction). The variable
 is also a class parameter. That means that you should define its value
-when creating a class instance or object.
+when creating a class instance or object.</p>
 
-On line 6 we can see a class composition operation `use` which can
+<p>On line 6 we can see a class composition operation <code>use</code> which can
 describe (multiple) inheritance, traits, and duck typing.  The
-operation `use` has the following semantics:
+operation <code>use</code> has the following semantics:</p>
 
-  * Definitions of class mentioned in `use` are inlayed
-  * Definitions before the `use` rewrite corresponding inlayed
-    definitions mentioned in former-clause
-  * Definitions after the `use` rewrite corresponding inserted
-    definitions mentioned in later-clause
-  * The definitions should be matched
-  * The original and new definitions should be present if they are in
-    former- or later-clause
+<ul>
+<li>Definitions of class mentioned in <code>use</code> are inlayed</li>
+<li>Definitions before the <code>use</code> rewrite corresponding inlayed
+definitions mentioned in former-clause</li>
+<li>Definitions after the <code>use</code> rewrite corresponding inserted
+definitions mentioned in later-clause</li>
+<li>The definitions should be matched</li>
+<li>The original and new definitions should be present if they are in
+former- or later-clause</li>
+</ul>
 
-To follow a common terminology, we call a class which uses definitions
-of another class a sub-class of the another class.
 
-```
-     1. obj ir {                                                                                     
-     2.   var ns = [], t2i = tab []; // all ir nodes, token name->token index                        
-     3.   var l2i = tab [], i2l = tab []; // label -> node index -> label vector
+<p>To follow a common terminology, we call a class which uses definitions
+of another class a sub-class of the another class.</p>
+
+<pre><code>     1. obj ir {                                                                                     
+     2.   var ns = [], t2i = tab []; // all ir nodes, token name-&gt;token index                        
+     3.   var l2i = tab [], i2l = tab []; // label -&gt; node index -&gt; label vector
      4.   var mind = nil, maxd = nil;                                                                
      5.   class irn (lno) {}                                                                         
      6.   class goto (lno, lab)   { use irn former lno; }                                            
@@ -199,111 +243,114 @@ of another class a sub-class of the another class.
     13.                                                                                              
     14. fun err (...) {                                                                              
     15.   fput (stderr, argv[0], ": ");                                                              
-    16.   for (var i = 0; i < #args; i++)                                                            
+    16.   for (var i = 0; i &lt; #args; i++)                                                            
     17.     if (args[i] != nil)                                                                      
     18.       fput (stderr, args[i]);                                                                
     19.   fputln (stderr);                                                                           
     20.   exit (1);                                                                                  
     21. }                                                                                            
-```
+</code></pre>
 
-Lines 14-21 contain a function to output errors. The function accepts
+<p>Lines 14-21 contain a function to output errors. The function accepts
 a variable number of parameters. Any function or class should be
 called with the same number of actual parameters as the number of
 formal parameters.  The number of actual parameters can be more if the
-last formal parameter is "...".  The last actual parameters
-corresponding to "..." will form a vector assigned to implicitly
-defined variable `args`.
+last formal parameter is &ldquo;&hellip;&rdquo;.  The last actual parameters
+corresponding to &ldquo;&hellip;&rdquo; will form a vector assigned to implicitly
+defined variable <code>args</code>.</p>
 
-The other elements are:
+<p>The other elements are:</p>
 
-  * The `err` function, which outputs all parameters into the standard
-    error stream.
-  * The `fput` function, which outputs strings, characters, integers,
-    or floating point numbers
-  * The `fputln` function, which is the same as `fput`, but additionally
-    outputs a new line)
-  * The `exit` function, which finishes the Dino program with given
-    code.
-  * The variables `argv`, which are all command line arguments of the
-    Dino program. So `argv[0]` will be an assembler program file name.
-  * `stderr` (standard error stream), which is predefined in Dino.
+<ul>
+<li>The <code>err</code> function, which outputs all parameters into the standard
+error stream.</li>
+<li>The <code>fput</code> function, which outputs strings, characters, integers,
+or floating point numbers</li>
+<li>The <code>fputln</code> function, which is the same as <code>fput</code>, but additionally
+outputs a new line)</li>
+<li>The <code>exit</code> function, which finishes the Dino program with given
+code.</li>
+<li>The variables <code>argv</code>, which are all command line arguments of the
+Dino program. So <code>argv[0]</code> will be an assembler program file name.</li>
+<li><code>stderr</code> (standard error stream), which is predefined in Dino.</li>
+</ul>
 
-There are many other predefined functions, classes, and variables in
-Dino. On line 16 you can see the operator `#`, which returns the number
-of elements in a vector or an associative table.
 
-Here we should say some words about the definition scope, in other
+<p>There are many other predefined functions, classes, and variables in
+Dino. On line 16 you can see the operator <code>#</code>, which returns the number
+of elements in a vector or an associative table.</p>
+
+<p>Here we should say some words about the definition scope, in other
 words places where the definition can be referred by its identifier.
 In most cases the scope is a range between the definition point and
 end of the block in which the definition is given.  The scope excludes
 scopes of definitions with the same identifier in the nested blocks.
-To make an useful *REPL* (an interactive Dino shell --
+To make an useful <em>REPL</em> (an interactive Dino shell &ndash;
 read-eval-print loop), another definition with the same identifier is
 permitted in the same block. So the definition scope can finish
 earlier before another definition with the same identifier in the same
-block.
+block.</p>
 
-## File input.d
+<h2>File input.d</h2>
 
-This file contains the function `get_ir`, which reads the file given as
+<p>This file contains the function <code>get_ir</code>, which reads the file given as
 its parameter, performs some checks on the file, and generates the IR
-of the source program.
+of the source program.</p>
 
-The first line contains an *include-clause* that specifies a source file
-without the suffix **.d** (all Dino source files should have this
+<p>The first line contains an <em>include-clause</em> that specifies a source file
+without the suffix <strong>.d</strong> (all Dino source files should have this
 suffix). The file is given as a string in the clause; this means that
 the entire file is inserted in place of the clause. As result, we
-could check the file by calling the Dino interpreter with `input.d` on a
+could check the file by calling the Dino interpreter with <code>input.d</code> on a
 command line. There are several rules that define which directories
 are searched for the included file. One such directory is the
 directory of the file that contains the include-clause. Thus, we can
 place all the assembler files in that one directory and forget about
-the other rules.
+the other rules.</p>
 
-The file is inserted only once in a given *block* (this is the
-construction that starts with `{` and finishes with `}`). This is
+<p>The file is inserted only once in a given <em>block</em> (this is the
+construction that starts with <code>{</code> and finishes with <code>}</code>). This is
 important for our program because each file will contain an inclusion
-of the file `ir.d`, and eventually all the files will be included into
+of the file <code>ir.d</code>, and eventually all the files will be included into
 the main program file. Unconditional inclusion in this case would
 result in many error messages about repeated definitions. By the way,
 there is also special form of the include-clause that permits
-unconditional file inclusion.
+unconditional file inclusion.</p>
 
-On lines 4-13 we define some variables. Definitions can start with
-keyword `var` or `val`.  Variables defined with `val` can not change
+<p>On lines 4-13 we define some variables. Definitions can start with
+keyword <code>var</code> or <code>val</code>.  Variables defined with <code>val</code> can not change
 their initial value, in other words they can be considered as name
 constant.  We use regular expressions to assign them strings that
 describe the correct assembler lines. The regular expressions are Ruby
 dialect regular expressions of
-[ONIGURUMA](https://github.com/kkos/oniguruma) package.  These regular
+<a href="https://github.com/kkos/oniguruma">ONIGURUMA</a> package.  These regular
 expressions are extension of ones that are described in POSIX 10003.2.
-To concatenate the strings (vectors), we use the operator `@`.
+To concatenate the strings (vectors), we use the operator <code>@</code>.</p>
 
-Line 15 contains a call of the special *try-function* that is used to
-process *exceptional* situations in the Dino program.  Besides
-try-functions Dino has *try-blocks* to process exceptions in bigger
-areas.
+<p>Line 15 contains a call of the special <em>try-function</em> that is used to
+process <em>exceptional</em> situations in the Dino program.  Besides
+try-functions Dino has <em>try-blocks</em> to process exceptions in bigger
+areas.</p>
 
-The Dino interpreter can generate a lot of predefined exceptions. A
+<p>The Dino interpreter can generate a lot of predefined exceptions. A
 Dino programmer can also describe and generate other exceptions. The
-exceptions are objects of the predefined class `except`, or they are
-objects of a class defined inside the class `except`.
+exceptions are objects of the predefined class <code>except</code>, or they are
+objects of a class defined inside the class <code>except</code>.</p>
 
-In our example, the exception we catch is "reaching the end of a
-file", which is generated by the predefined function `fgetln` (reading
+<p>In our example, the exception we catch is &ldquo;reaching the end of a
+file&rdquo;, which is generated by the predefined function <code>fgetln</code> (reading
 a new line from a file). If we do not catch the exception, the program
 finishes with a diagnostic about reaching the end of the file. In the
 try-function call, we write a class of exceptions that we want to
 catch as the second argument. The value is the the predefined class
-`eof` which is a sub-class of the class `invcall`. In turn, the class
-invcall is a sub-class of the class `error` which is finally a
-sub-class of the class `except`.
+<code>eof</code> which is a sub-class of the class <code>invcall</code>. In turn, the class
+invcall is a sub-class of the class <code>error</code> which is finally a
+sub-class of the class <code>except</code>.</p>
 
-The predefined function `fgetln` returns the next line from the
+<p>The predefined function <code>fgetln</code> returns the next line from the
 file. After this, the line is matched with the pattern on line 17. The
-predefined function `match` from the predefined singleton object `re`
-returns the value `nil` if the input line does not correspond to the
+predefined function <code>match</code> from the predefined singleton object <code>re</code>
+returns the value <code>nil</code> if the input line does not correspond to the
 pattern, otherwise it returns a vector of integer pairs. The first
 pair is the first and the last character indexes in the line. The
 first pair defines the substring that corresponds to the whole
@@ -311,28 +358,27 @@ pattern. The following pairs of indexes correspond to constructions in
 parentheses in the pattern. They define substrings that are matched to
 the constructions in the parentheses. If a construction is not matched
 (for example, because an alternative is rejected), the indexes have
-the value -1.
+the value -1.</p>
 
-The statement on line 20 extracts a label. The predefined function
-subv is used to extract the sub-vectors (sub-strings).
+<p>The statement on line 20 extracts a label. The predefined function
+subv is used to extract the sub-vectors (sub-strings).</p>
 
-On lines 21 and 22, we use an empty vector to initialize a table
-element that corresponds to the current assembler instruction.
+<p>On lines 21 and 22, we use an empty vector to initialize a table
+element that corresponds to the current assembler instruction.</p>
 
-On lines 23-28, we process a label, if it is defined on the line. On
+<p>On lines 23-28, we process a label, if it is defined on the line. On
 lines 24-25, we check that the label is not defined repeatedly. On
 line 26, we define how to map the label name into number of the
 assembler instruction to which the label is bound. We make that
-mapping with the aid of associative table `ir.l2i`. On line 27, we add
+mapping with the aid of associative table <code>ir.l2i</code>. On line 27, we add
 the label name to the vector that is the element of associative table
-`ir.i2l` that has a key equal to the number of the assembler
-instruction. Predefined function `ins` (insertion of element into
+<code>ir.i2l</code> that has a key equal to the number of the assembler
+instruction. Predefined function <code>ins</code> (insertion of element into
 vector) is used with index -1, which means addition of the element at
 the vector end. Dino has extensible vectors. There are also predefined
-functions to delete elements in vectors (and associative tables).
+functions to delete elements in vectors (and associative tables).</p>
 
-```
-     1. include "ir";                                                                    
+<pre><code>     1. include "ir";                                                                    
      2.                                                                                  
      3. fun get_ir (f) {                                                                 
      4.   var ln, lno = 0, code, lab, op, v;                                             
@@ -351,7 +397,7 @@ functions to delete elements in vectors (and associative tables).
     17.     v = re.match (pattern, ln);                                                  
     18.     if (v == nil)                                                                
     19.       err ("syntax error on line ", lno);                                        
-    20.     lab = (v[4] >= 0 ? subv (ln, v[4], v[5] - v[4]) : nil);                      
+    20.     lab = (v[4] &gt;= 0 ? subv (ln, v[4], v[5] - v[4]) : nil);                      
     21.     if (!(#ir.ns in ir.i2l))                                                     
     22.       ir.i2l[#ir.ns] = [];                                                       
     23.     if (lab != nil) {                                                            
@@ -360,10 +406,10 @@ functions to delete elements in vectors (and associative tables).
     26.       ir.l2i[lab] = #ir.ns;                                                      
     27.       ins (ir.i2l [#ir.ns], lab, -1);                                            
     28.     }                                                                            
-    29.     code = (v[8] >= 0 ? subv (ln, v[8], v[9] - v[8]) : nil);                     
+    29.     code = (v[8] &gt;= 0 ? subv (ln, v[8], v[9] - v[8]) : nil);                     
     30.     if (code == nil)                                                             
     31.       continue;  // skip comment or absent code                                  
-    32.     op = (v[10] >= 0 ? subv (ln, v[10], v[11] - v[10]) : nil);                   
+    32.     op = (v[10] &gt;= 0 ? subv (ln, v[10], v[11] - v[10]) : nil);                   
     33.     var node;                                                                    
     34.     if (code == "goto" || code == "gosub") {                                     
     35.       if (op == nil || re.match (p_id, op) == nil)                               
@@ -381,94 +427,92 @@ functions to delete elements in vectors (and associative tables).
     47.     ins (ir.ns, node, -1);                                                       
     48.   }                                                                              
     49. }
-```
+</code></pre>
 
-On lines 34-46 we check the current assembler instruction and create
+<p>On lines 34-46 we check the current assembler instruction and create
 the corresponding IR node (an object of a class inside the singleton
-object `ir` -- see file `ir.d`). And finally, we insert the node at
-the end of the vector `ir.ns` (line 47).
+object <code>ir</code> &ndash; see file <code>ir.d</code>). And finally, we insert the node at
+the end of the vector <code>ir.ns</code> (line 47).</p>
 
-## File check.d
+<h2>File check.d</h2>
 
-After processing all assembler instructions in the file `input.d`, we
+<p>After processing all assembler instructions in the file <code>input.d</code>, we
 can check that all labels are defined (lines 9-10) and we can evaluate
-the maximum and minimum displacements of `goto` and `gosub`
+the maximum and minimum displacements of <code>goto</code> and <code>gosub</code>
 instructions from the corresponding label definition (lines
-11-14). The function `check` makes this work. It also forms an
-associative table `ir.ss` of all symbols given in the instructions
-`match` and `skipif`, and enumerates the symbols (lines 6-7). Here the
-function `isa` (lines 6 and 8) is used to define that an object is of
-a given class, or of a sub-class of a given class.
+11-14). The function <code>check</code> makes this work. It also forms an
+associative table <code>ir.ss</code> of all symbols given in the instructions
+<code>match</code> and <code>skipif</code>, and enumerates the symbols (lines 6-7). Here the
+function <code>isa</code> (lines 6 and 8) is used to define that an object is of
+a given class, or of a sub-class of a given class.</p>
 
-```
-     1. include "ir";                                                                
+<pre><code>     1. include "ir";                                                                
      2.                                                                              
      3. fun check {                                                                  
-     4.   for (var i = 0; i < #ir.ns; i++) {                                         
+     4.   for (var i = 0; i &lt; #ir.ns; i++) {                                         
      5.     val n = ir.ns[i];                                                        
-     6.     if ((isa (n, ir.match) || isa (n, ir.skipif)) && !(n.sym in ir.t2i))     
+     6.     if ((isa (n, ir.match) || isa (n, ir.skipif)) &amp;&amp; !(n.sym in ir.t2i))     
      7.       ir.t2i[n.sym] = #ir.t2i;                                               
      8.     else if (isa (n, ir.goto) || isa (n, ir.gosub)) {                        
      9.       if (!(n.lab in ir.l2i))                                                
     10.         err ("undefined label `", n.lab, "' on line ", n.lno);               
-    11.       if (ir.maxd == nil || ir.maxd < ir.l2i[n.lab] - i)                     
+    11.       if (ir.maxd == nil || ir.maxd &lt; ir.l2i[n.lab] - i)                     
     12.         ir.maxd = ir.l2i[n.lab] - i;                                         
-    13.       if (ir.mind == nil || ir.mind > ir.l2i[n.lab] - i)                     
+    13.       if (ir.mind == nil || ir.mind &gt; ir.l2i[n.lab] - i)                     
     14.         ir.mind = ir.l2i[n.lab] - i;                                         
     15.     }                                                                        
     16.   }                                                                          
     17. }
-```
+</code></pre>
 
-## File gen.d
+<h2>File gen.d</h2>
 
-The biggest assembler source file is the interpreter generator.  To
+<p>The biggest assembler source file is the interpreter generator.  To
 make the code more brief and to permit referring for the definitions
-of the singleton object `ir` without using prefix `ir.`, we expose all
-definitions (line 2).  In general the clause `expose` can expose all
-or only specific definitions, even using their new names.
+of the singleton object <code>ir</code> without using prefix <code>ir.</code>, we expose all
+definitions (line 2).  In general the clause <code>expose</code> can expose all
+or only specific definitions, even using their new names.</p>
 
-Dino has a few standard singleton objects which contains the rest of
-standard definitions.  All definitions inside standard objects `lang`
-and `io` are always exposed.  Therefore we refer for some most
-frequenlty used standard definitions, e.g. `argv` or `fput`, without
-mentioning objects in which they defined.
+<p>Dino has a few standard singleton objects which contains the rest of
+standard definitions.  All definitions inside standard objects <code>lang</code>
+and <code>io</code> are always exposed.  Therefore we refer for some most
+frequenlty used standard definitions, e.g. <code>argv</code> or <code>fput</code>, without
+mentioning objects in which they defined.</p>
 
-In file `gen.d` we generates two files: a `.h` file (the interface of
-the interpreter) and a `.c` file (the interpreter itself). We create
-the files on line 5. The parameter `bname` of the function `gen` is a
+<p>In file <code>gen.d</code> we generates two files: a <code>.h</code> file (the interface of
+the interpreter) and a <code>.c</code> file (the interpreter itself). We create
+the files on line 5. The parameter <code>bname</code> of the function <code>gen</code> is a
 base name of the generated files. The interface file contains
-definitions of codes of tokens in `match` and `skipif` instructions as
-C macros (line 10) and definition of function `yyparse` (line
-33). Function `yyparse` is a main interpreter function. It returns 0
-if the source program is correct, and nonzero otherwise.
+definitions of codes of tokens in <code>match</code> and <code>skipif</code> instructions as
+C macros (line 10) and definition of function <code>yyparse</code> (line
+33). Function <code>yyparse</code> is a main interpreter function. It returns 0
+if the source program is correct, and nonzero otherwise.</p>
 
-The generated interpreter requires the external functions `yylex` and
-`yyerror` (line 32). The function `yylex` is used by the interpreter to
-read and to get the code of the current token. Function `yyerror` should
+<p>The generated interpreter requires the external functions <code>yylex</code> and
+<code>yyerror</code> (line 32). The function <code>yylex</code> is used by the interpreter to
+read and to get the code of the current token. Function <code>yyerror</code> should
 output error diagnostics. (The interface is a simplified version of
-the Yacc Unix Utility interface.)
+the Yacc Unix Utility interface.)</p>
 
-The compiled assembler program is presented by a C array of chars or
-short integers with the name `program`. Each element of the array is
+<p>The compiled assembler program is presented by a C array of chars or
+short integers with the name <code>program</code>. Each element of the array is
 an encoded instruction of the source program. On lines 13-17, we
 evaluate the start code for each kind of assembler instruction and
-define the type of array elements.
+define the type of array elements.</p>
 
-On lines 18-31, we output the array `program`.  To differ IR nodes we
-use *pattern-matching* (see `pmatch`-statement).  Pattern matching is
+<p>On lines 18-31, we output the array <code>program</code>.  To differ IR nodes we
+use <em>pattern-matching</em> (see <code>pmatch</code>-statement).  Pattern matching is
 a powerful technique to work with objects, vectors, and tables.  It
-permits to assign parts of the matched value to *pattern variables*.
+permits to assign parts of the matched value to <em>pattern variables</em>.
 For example, on line 21 we assigns the second parameter value of class
-`goto` object to implicitly defined variable `lab` and use it in the
-statements corresponding to given case.
+<code>goto</code> object to implicitly defined variable <code>lab</code> and use it in the
+statements corresponding to given case.</p>
 
-On lines 35-58, we output the function `yyparse`. Finally, on line 59
+<p>On lines 35-58, we output the function <code>yyparse</code>. Finally, on line 59
 we close the two output files with the aid of the predefined function
-`close`.
+<code>close</code>.</p>
 
-```
-     1. include "ir";                                                                      
+<pre><code>     1. include "ir";                                                                      
      2. expose ir.*;                                                                       
      3.                                                                                    
      4. fun gen (bname) {                                                                  
@@ -476,7 +520,7 @@ we close the two output files with the aid of the predefined function
      6.   var i, vect;                                                                     
      7.                                                                                    
      8.   vect = vec (t2i) [0::2];                                                         
-     9.   for (i = 0; i < #vect; i++)                                                      
+     9.   for (i = 0; i &lt; #vect; i++)                                                      
     10.     fputln (h, "#define ", vect[i], "\t", i + 1);                                  
     11.   fputln (h);                                                                      
     12.   fputln (c, "#include \"", bname, ".h\"\n\n");                                    
@@ -484,9 +528,9 @@ we close the two output files with the aid of the predefined function
     14.       goto_start = skipif_start + #t2i,                                            
     15.       gosub_start = goto_start + (maxd - mind) + 1,                                
     16.       max_code = gosub_start + (maxd - mind);                                      
-    17.   val t = (max_code < 256 ? "unsigned char" : "unsigned short");                   
+    17.   val t = (max_code &lt; 256 ? "unsigned char" : "unsigned short");                   
     18.   fputln (c, "\nstatic ", t, " program [] = {");                                   
-    19.   for (i = 0; i < #ns; i++) {                                                      
+    19.   for (i = 0; i &lt; #ns; i++) {                                                      
     20.     pmatch (ns[i]) {                                                               
     21.     case goto (_, lab): fput (c, " ", goto_start + l2i[lab] - i - mind, ",");      
     22.     case match (_, sym): fput (c, " ", match_start + t2i[sym], ",");               
@@ -505,34 +549,34 @@ we close the two output files with the aid of the predefined function
     35.   fputln (c, "\nint yyparse () {\n  int yychar = yylex (), pc = 0, code;\n  ",     
     36.           t, " call_stack [YYCALLSTACK_SIZE];\n  ", t, " *free = call_stack;");    
     37.   fputln (c, "\n  *free++ = sizeof (program) / sizeof (program [0]) - 1;");        
-    38.   fputln (c, "  while ((code = program [pc]) != 0 && yychar > 0) {");              
+    38.   fputln (c, "  while ((code = program [pc]) != 0 &amp;&amp; yychar &gt; 0) {");              
     39.   fputln (c, "    pc++;\n    if (code == 1)\n      yychar = yylex ();");           
     40.   fputln (c, "    else if (code == 2) /*return*/\n      pc = *--free;");           
-    41.   fputln (c, "    else if ((code -= 2) < ", #t2i, ") {/*match*/");                 
+    41.   fputln (c, "    else if ((code -= 2) &lt; ", #t2i, ") {/*match*/");                 
     42.   fputln (c, "      if (yychar == code)\n        pc++;\n      else {");            
     43.   fputln (c, "        yyerror (\"Syntax error\");\n        return 1;\n      }");   
-    44.   fputln (c, "    } else if ((code -= ", #t2i, ") < ", #t2i, ") {");               
+    44.   fputln (c, "    } else if ((code -= ", #t2i, ") &lt; ", #t2i, ") {");               
     45.   fputln (c, "      if (yychar == code)\n        pc++; /*skipif*/");               
-    46.   fputln (c, "    } else if ((code -= ", #t2i, ") <= ", maxd - mind,               
+    46.   fputln (c, "    } else if ((code -= ", #t2i, ") &lt;= ", maxd - mind,               
     47.           ") /*goto*/\n      pc += code + ", mind, ";");                           
-    48.   fputln (c, "    else if ((code -= ", maxd - mind + 1, ") <= ",                   
+    48.   fputln (c, "    else if ((code -= ", maxd - mind + 1, ") &lt;= ",                   
     49.           maxd - mind, ") { /*gosub*/");                                           
-    50.   fputln (c, "      if (free >= call_stack + YYCALLSTACK_SIZE) {");                
+    50.   fputln (c, "      if (free &gt;= call_stack + YYCALLSTACK_SIZE) {");                
     51.   fputln (c, "        yyerror (\"Call stack overflow\");");                        
     52.   fputln (c, "        return 1;\n      }\n      pc += code + ", mind,              
     53.           ";\n      *free++ = pc;\n    } else {");                                 
     54.   fputln (c, "      yyerror (\"Internal error\");\n      return 1;\n    }");       
-    55.   fputln (c, "  }\n  if (code != 0 || yychar > 0) {");                             
+    55.   fputln (c, "  }\n  if (code != 0 || yychar &gt; 0) {");                             
     56.   fputln (c, "    if (code != 0)\n      yyerror (\"Unexpected EOF\");");           
     57.   fputln (c, "    else\n      yyerror (\"Garbage after end of program\");");       
     58.   fputln (c, "    return 1;\n  }\n  return 0;\n}");                                
     59.   close (h); close (c);                                                            
     60. }
-```
+</code></pre>
 
-## File sas.d
+<h2>File sas.d</h2>
 
-This is the main assembler file. Lines 1-4 are include-clauses for the
+<p>This is the main assembler file. Lines 1-4 are include-clauses for the
 inclusion of the previous files. Line 6-7 checks that the argument is
 given on the command line. On line 9 we open the file given on the
 command line, and call the function for reading and generating the IR
@@ -540,20 +584,19 @@ of the program. If the file does not exist or cannot be opened for
 reading, an exception is generated. The exception results in the
 output of standard diagnostics and finishes the program. We could
 catch the exception and do something else, but the standard
-diagnostics will be sufficient here. On line 10, we check the IR.
+diagnostics will be sufficient here. On line 10, we check the IR.</p>
 
-And finally on line 11, we generate the interpreter of the program. To
+<p>And finally on line 11, we generate the interpreter of the program. To
 get the base name of the assembler file, we use the predefined
-function `sub` from standard singleton object `re`, deleting all
+function <code>sub</code> from standard singleton object <code>re</code>, deleting all
 directories and suffixes from the file name and returning the result.
-Regular expressions frequently use `/` which is also an escape prefix
+Regular expressions frequently use <code>/</code> which is also an escape prefix
 in a regular string constant.  To avoid complicated regular string
 constants, we use another form of a string constant without any escape
 characters.  Such strings start and finish with a back qoute
-character.
+character.</p>
 
-```
-     1. include "ir";                                          
+<pre><code>     1. include "ir";                                          
      2. include "input";                                       
      3. include "check";                                       
      4. include "gen";                                         
@@ -564,76 +607,79 @@ character.
      9. get_ir (open (argv[0], "r"));                          
     10. check ();                                              
     11. gen (re.sub (`^(.*/)?([^.]*)(\..*)?$`, argv[0], `\2`));
-```
+</code></pre>
 
-## Results
+<h2>Results</h2>
 
-So we've written the assembler (this is 158 lines in Dino). As a test,
+<p>So we&rsquo;ve written the assembler (this is 158 lines in Dino). As a test,
 we will use Oberon-2 language grammar. You can look at Oberon-2 parser
-in the file [`oberon2.sas`](./oberon2.sas). After
+in the file <a href="./oberon2.sas"><code>oberon2.sas</code></a>. After</p>
 
-```
-        dino sas.d oberon2.sas
-```
-we will get two files oberon2.h and oberon2.c. Let's look at the size
-of generated x86-64 code:
+<pre><code>        dino sas.d oberon2.sas
+</code></pre>
 
-```
-        gcc -c oberon2.c; size oberon2.o
+<p>we will get two files oberon2.h and oberon2.c. Let&rsquo;s look at the size
+of generated x86-64 code:</p>
+
+<pre><code>        gcc -c oberon2.c; size oberon2.o
 
            text    data     bss     dec     hex filename
             579     934       0    1513     5e9 oberon2.o
-```
+</code></pre>
 
-For comparison, we would have about 15Kb for a YACC generated
+<p>For comparison, we would have about 15Kb for a YACC generated
 parser. Not bad. But we could make the parser even less than 1Kb by
 using short and long goto and gosub instructions. Actually, what we
 generate is not a parser, it is only a recognizer. But the assembler
 language could be easily extended to write parsers. Just add the
-instructions:
+instructions:</p>
 
-```
-       call C-function-name
-```
+<pre><code>       call C-function-name
+</code></pre>
 
-to call semantic functions for the generation of parsed code. In any
-case, most of a compiler's code would be in C. To further decrease the
+<p>to call semantic functions for the generation of parsed code. In any
+case, most of a compiler&rsquo;s code would be in C. To further decrease the
 compiler size (not only its parser), an interpreter of C that is
-specialized to the compiler could be written.
+specialized to the compiler could be written.</p>
 
-Of course, it is not easy work to write a parser on the assembler. So
+<p>Of course, it is not easy work to write a parser on the assembler. So
 we could generate assembler code from a high-level syntax description,
 for example, from a Backus-Naur form. Another area for improvement is
 the implementation of error recovery, but this was not our
-purpose. Our goal was just to demonstrate the Dino language.
+purpose. Our goal was just to demonstrate the Dino language.</p>
 
-# Some last comments
+<h1>Some last comments</h1>
 
-What Dino's features were missed in this introduction? Many details,
+<p>What Dino&rsquo;s features were missed in this introduction? Many details,
 of course, but we also have not described the following major parts of
-Dino language:
+Dino language:</p>
 
-  * Threads
-  * Public and private variables
-  * Mutable and immutable values
-  * Anonymous functions, classes, threads
-  * Closures and higher order functions
-  * Regular expression match-statement
-  * Interface with C language and writing external dynamic libraries
+<ul>
+<li>Threads</li>
+<li>Public and private variables</li>
+<li>Mutable and immutable values</li>
+<li>Anonymous functions, classes, threads</li>
+<li>Closures and higher order functions</li>
+<li>Regular expression match-statement</li>
+<li>Interface with C language and writing external dynamic libraries</li>
+</ul>
 
-The Dino interpreter is distributed under GNU Public license. You can
-find it on
 
-[https://github.com/dino-lang/dino](https://github.com/dino-lang/dino)
+<p>The Dino interpreter is distributed under GNU Public license. You can
+find it on</p>
 
-------------------------------------------------------------------------
+<p><a href="https://github.com/dino-lang/dino">https://github.com/dino-lang/dino</a></p>
 
-`[1]`: "Algol 60 Implementation" by B. Randell and L.J. Russel,
-Academic Press, 1964.
+<hr />
 
-`[2]`: "Compiler Construction for Digital Computers", David Gries,
-John Wiley & Sons, 1971.
+<p><code>[1]</code>: &ldquo;Algol 60 Implementation&rdquo; by B. Randell and L.J. Russel,
+Academic Press, 1964.</p>
 
-------------------------------------------------------------------------
+<p><code>[2]</code>: &ldquo;Compiler Construction for Digital Computers&rdquo;, David Gries,
+John Wiley &amp; Sons, 1971.</p>
 
-Copyright © 2016, Vladimir N. Makarov
+<hr />
+
+<p>Copyright © 2016, Vladimir N. Makarov</p>
+</body>
+</html>
