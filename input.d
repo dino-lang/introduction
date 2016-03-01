@@ -44,6 +44,6 @@ fun get_ir (f) {
   	err (" non empty operand `", op, "' on line ", lno);
       node = (code == "next" ? ir.next (lno) : ir.ret (lno));
     }
-    ins (ir.ns, node, -1);
+    ins (ir.ns, node);
   }
 }

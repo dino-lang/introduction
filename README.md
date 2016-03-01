@@ -1,6 +1,6 @@
 # Introduction to Programming in Dino
 ## Vladimir Makarov, vmakarov@gcc.gnu.org
-## Feb, 2016
+## Mar, 2016
 
 
 *Dino* is a high-level, dynamically typed, scripting language that has
@@ -325,7 +325,7 @@ To concatenate the strings (vectors), we use the operator `@`.
     44.         err (" non empty operand `", op, "' on line ", lno);                     
     45.       node = (code == "next" ? ir.next (lno) : ir.ret (lno));                    
     46.     }                                                                            
-    47.     ins (ir.ns, node, -1);                                                       
+    47.     ins (ir.ns, node);                                                       
     48.   }                                                                              
     49. }
 ```
@@ -364,7 +364,7 @@ the constructions in the parentheses. If a construction is not matched
 the value -1.
 
 The statement on line 20 extracts a label. The predefined function
-subv is used to extract the sub-vectors (sub-strings).
+`subv` is used to extract the sub-vectors (sub-strings).
 
 On lines 21 and 22, we use an empty vector to initialize a table
 element that corresponds to the current assembler instruction.
@@ -378,8 +378,9 @@ the label name to the vector that is the element of associative table
 `ir.i2l` that has a key equal to the number of the assembler
 instruction. Predefined function `ins` (insertion of element into
 vector) is used with index -1, which means addition of the element at
-the vector end. Dino has extensible vectors. There are also predefined
-functions to delete elements in vectors (and associative tables).
+the vector end. Absence of index also means addition at the vector
+end. Dino has extensible vectors. There are also predefined functions
+to delete elements in vectors (and associative tables).
 
 On lines 34-46 we check the current assembler instruction and create
 the corresponding IR node (an object of a class inside the singleton
